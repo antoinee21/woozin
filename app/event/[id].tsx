@@ -343,6 +343,84 @@ function ParticipantRow({ name, status }: { name: string; status: string }) {
   )
 }
 
+// ─── Reactions ───────────────────────────────────────────────────────────────
+
+const REACTION_LIST = ['🔥', '😂', '❤️', '👀', '🎉'] as const
+type Emoji = typeof REACTION_LIST[number]
+
+// Mock initial counts per event
+const MOCK_REACTIONS: Record<Emoji, number> = {
+  '🔥': 4, '😂': 2, '❤️': 6, '👀': 1, '🎉': 3,
+}
+
+function ReactionPill({
+  emoji, count, active, onPress,
+}: { emoji: Emoji; count: number; active: boolean; onPress: () => void }) {
+  const scale = useSharedValue(1)
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }))
+
+  function handlePress() {
+    scale.value = withSequence(
+      withSpring(active ? 0.85 : 1.35, { damping: 5, stiffness: 400 }),
+      withSpring(1, { damping: 8 }),
+    )
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    onPress()
+  }
+
+  return (
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
+      <Animated.View style={[
+        styles.reactionPill,
+        active && styles.reactionPillActive,
+        animStyle,
+      ]}>
+        <Text style={styles.reactionEmoji}>{emoji}</Text>
+        {count > 0 && (
+          <Text style={[styles.reactionCount, active && styles.reactionCountActive]}>
+            {count}
+          </Text>
+        )}
+      </Animated.View>
+    </TouchableOpacity>
+  )
+}
+
+function ReactionsBar() {
+  const [counts, setCounts]   = useState<Record<Emoji, number>>({ ...MOCK_REACTIONS })
+  const [mine, setMine]       = useState<Set<Emoji>>(new Set())
+
+  function toggle(emoji: Emoji) {
+    const isActive = mine.has(emoji)
+    setMine(prev => {
+      const next = new Set(prev)
+      isActive ? next.delete(emoji) : next.add(emoji)
+      return next
+    })
+    setCounts(prev => ({
+      ...prev,
+      [emoji]: prev[emoji] + (isActive ? -1 : 1),
+    }))
+  }
+
+  return (
+    <View style={styles.reactionsRow}>
+      {REACTION_LIST.map(emoji => (
+        <ReactionPill
+          key={emoji}
+          emoji={emoji}
+          count={counts[emoji]}
+          active={mine.has(emoji)}
+          onPress={() => toggle(emoji)}
+        />
+      ))}
+    </View>
+  )
+}
+
 // ─── Animated spots counter ───────────────────────────────────────────────────
 
 function SpotsCounter({ value, max }: { value: number; max: number | null }) {
@@ -442,6 +520,9 @@ export default function EventDetailScreen() {
           </View>
         </View>
 
+        {/* Reactions */}
+        <ReactionsBar />
+
         {/* Who was really in */}
         {isPast && <WhoWasReallyIn yesParticipants={yesParticipants} />}
 
@@ -511,6 +592,37 @@ const styles = StyleSheet.create({
 
   barLegend:  { flexDirection: 'row', justifyContent: 'space-around', marginTop: 10 },
   legendItem: { fontFamily: fonts.body, fontSize: 13 },
+
+  // Reactions
+  reactionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    flexWrap: 'wrap',
+  },
+  reactionPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: colors.card,
+    borderRadius: radius.pill,
+    borderWidth: 1.5,
+    borderColor: colors.divider,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+  },
+  reactionPillActive: {
+    backgroundColor: 'rgba(255,90,60,0.12)',
+    borderColor: colors.primary,
+  },
+  reactionEmoji: { fontSize: 18 },
+  reactionCount: {
+    color: colors.txt2,
+    fontFamily: fonts.semibold,
+    fontSize: 13,
+  },
+  reactionCountActive: { color: colors.primary },
 
   participantRow:    { flexDirection: 'row', alignItems: 'center', paddingVertical: 6, gap: 10, borderBottomWidth: 1, borderBottomColor: colors.divider },
   participantName:   { flex: 1, color: colors.txt, fontFamily: fonts.body, fontSize: 14 },
