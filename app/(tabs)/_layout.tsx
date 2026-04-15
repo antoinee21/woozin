@@ -51,6 +51,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="classement"
+        options={{
+          title: 'Classement',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon name={focused ? 'trophy' : 'trophy-outline'} focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="invitations"
         options={{
           title: 'Invitations',

@@ -10,7 +10,6 @@ import {
 import { useRouter } from 'expo-router'
 import { colors, fonts, radius } from '../../constants/theme'
 import { EventCard } from '../../components/EventCard'
-import { Leaderboard } from '../../components/Leaderboard'
 import { MOCK_EVENTS } from '../../mock/events'
 
 function todayLabel(): string {
@@ -53,9 +52,6 @@ export default function HomeScreen() {
         {sorted.map((event) => (
           <EventCard key={event.id} event={event} onPress={handleEventPress} />
         ))}
-
-        {/* Leaderboard */}
-        <Leaderboard />
       </ScrollView>
 
       {/* CTA — sticky bottom */}
