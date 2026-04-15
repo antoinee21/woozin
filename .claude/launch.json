@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Expo Dev Server",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "port": 8081,
+      "autoPort": true
+    },
+    {
+      "name": "Expo Web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "web"],
+      "port": 8082,
+      "autoPort": false
+    },
+    {
+      "name": "Expo Android",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "android"],
+      "port": 8081,
+      "autoPort": true
+    }
+  ]
+}
