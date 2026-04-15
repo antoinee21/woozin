@@ -26,8 +26,9 @@ function TabIcon({ name, focused, badge }: TabIconProps) {
   )
 }
 
-// In a real app this would come from a context/store
-const PENDING_INVITATIONS = 3
+import { MOCK_EVENTS } from '../../mock/events'
+
+const PENDING_INVITATIONS = MOCK_EVENTS.filter(e => e.userStatus === 'pending').length
 
 export default function TabLayout() {
   return (
