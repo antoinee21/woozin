@@ -153,19 +153,38 @@ function InvitationCard({ inv, onVote }: InvitationCardProps) {
         {spots}
       </Text>
 
-      {/* Avatars already in */}
+      {/* FOMO tease */}
       {inv.participants.length > 0 && (
-        <View style={styles.avatarRow}>
-          {inv.participants.slice(0, 5).map((p, i) => (
-            <View key={p.id} style={[styles.avatarWrap, { zIndex: 10 - i, marginLeft: i === 0 ? 0 : -8 }]}>
-              <Avatar name={p.name} size={28} />
-            </View>
-          ))}
-          <Text style={styles.alreadyIn}>
-            {inv.confirmed > 5
-              ? ` +${inv.confirmed - 5} · ${inv.confirmed} viennent`
-              : ` ${inv.confirmed} viennent`}
-          </Text>
+        <View style={styles.fomoBlock}>
+          {/* Avatar stack */}
+          <View style={styles.avatarRow}>
+            {inv.participants.slice(0, 4).map((p, i) => (
+              <View key={p.id} style={[styles.avatarWrap, { zIndex: 10 - i, marginLeft: i === 0 ? 0 : -8 }]}>
+                <Avatar name={p.name} size={30} />
+              </View>
+            ))}
+          </View>
+          {/* FOMO sentence */}
+          <View style={styles.fomoTextBlock}>
+            <Text style={styles.fomoText}>
+              <Text style={styles.fomoNames}>
+                {inv.participants.slice(0, 2).map(p => p.name).join(' et ')}
+              </Text>
+              {inv.confirmed > 2
+                ? ` et ${inv.confirmed - 2} autre${inv.confirmed - 2 > 1 ? 's' : ''} ont dit oui`
+                : ' ont déjà dit oui'}
+            </Text>
+            {/* Hot badge if few spots left */}
+            {inv.maxParticipants !== null && inv.maxParticipants - inv.confirmed <= 3 && (
+              <View style={styles.fomoBadge}>
+                <Text style={styles.fomoBadgeText}>
+                  {inv.maxParticipants - inv.confirmed <= 1
+                    ? '🔥 Dernière place !'
+                    : `🔥 Plus que ${inv.maxParticipants - inv.confirmed} places`}
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
       )}
 
@@ -408,22 +427,51 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  // Avatars
+  // FOMO
+  fomoBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 10,
+    backgroundColor: 'rgba(59,255,122,0.06)',
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: 'rgba(59,255,122,0.15)',
+    padding: 10,
+  },
   avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
   },
   avatarWrap: {
     borderRadius: radius.pill,
     borderWidth: 1.5,
     borderColor: colors.card,
   },
-  alreadyIn: {
+  fomoTextBlock: { flex: 1, gap: 4 },
+  fomoText: {
     color: colors.txt2,
     fontFamily: fonts.regular,
-    fontSize: 12,
-    marginLeft: 8,
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  fomoNames: {
+    color: colors.txt,
+    fontFamily: fonts.semibold,
+  },
+  fomoBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,90,60,0.12)',
+    borderRadius: radius.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  fomoBadgeText: {
+    color: colors.primary,
+    fontFamily: fonts.semibold,
+    fontSize: 11,
   },
 
   divider: {
