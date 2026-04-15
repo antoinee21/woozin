@@ -8,18 +8,11 @@ import {
   SafeAreaView,
   Share,
 } from 'react-native'
+import { useRouter } from 'expo-router'
 import { colors, fonts, radius } from '../../constants/theme'
 import { Avatar } from '../../components/atoms'
 import { MOCK_EVENTS } from '../../mock/events'
-
-// ─── Mock current user ────────────────────────────────────────────────────────
-
-const ME = {
-  id: 'me',
-  name: 'Antoine',
-  handle: '@antoine',
-  joinedDate: 'Janvier 2024',
-}
+import { useAuth } from '../../context/AuthContext'
 
 // ─── Stats derived from mock events ──────────────────────────────────────────
 
@@ -107,8 +100,13 @@ function RecentRow({ event }: { event: (typeof MOCK_EVENTS)[0] }) {
 // ─── Screen ───────────────────────────────────────────────────────────────────
 
 export default function ProfileScreen() {
+  const { user, signOut } = useAuth()
+  const router = useRouter()
   const stats = buildStats()
   const [showAll, setShowAll] = useState(false)
+
+  const name   = user?.name   ?? 'Moi'
+  const handle = user?.handle ?? '@moi'
 
   const sortedEvents = [...MOCK_EVENTS].sort((a, b) => b.date.getTime() - a.date.getTime())
   const visibleEvents = showAll ? sortedEvents : sortedEvents.slice(0, 4)
@@ -116,9 +114,14 @@ export default function ProfileScreen() {
   async function handleShare() {
     try {
       await Share.share({
-        message: `${ME.name} sur Woozin · ${stats.reliability}% de fiabilité · ${stats.yes} events rejoints 🎉`,
+        message: `${name} sur Woozin · ${stats.reliability}% de fiabilité · ${stats.yes} events rejoints 🎉`,
       })
     } catch (_) {}
+  }
+
+  async function handleSignOut() {
+    await signOut()
+    router.replace('/onboarding')
   }
 
   return (
@@ -130,11 +133,11 @@ export default function ProfileScreen() {
       >
         {/* ── Hero ── */}
         <View style={styles.hero}>
-          <Avatar name={ME.name} size={72} fontSize={28} />
+          <Avatar name={name} size={72} fontSize={28} />
           <View style={styles.heroInfo}>
-            <Text style={styles.heroName}>{ME.name}</Text>
-            <Text style={styles.heroHandle}>{ME.handle}</Text>
-            <Text style={styles.heroJoined}>Membre depuis {ME.joinedDate}</Text>
+            <Text style={styles.heroName}>{name}</Text>
+            <Text style={styles.heroHandle}>{handle}</Text>
+            <Text style={styles.heroJoined}>Membre depuis Janvier 2024</Text>
           </View>
         </View>
 
@@ -198,9 +201,9 @@ export default function ProfileScreen() {
             { icon: '🔔', label: 'Notifications' },
             { icon: '🔒', label: 'Confidentialité' },
             { icon: '❓', label: 'Aide & feedback' },
-            { icon: '🚪', label: 'Se déconnecter', danger: true },
+            { icon: '🚪', label: 'Se déconnecter', danger: true, onPress: handleSignOut },
           ].map(item => (
-            <TouchableOpacity key={item.label} style={styles.settingsRow} activeOpacity={0.7}>
+            <TouchableOpacity key={item.label} style={styles.settingsRow} activeOpacity={0.7} onPress={item.onPress}>
               <Text style={styles.settingsIcon}>{item.icon}</Text>
               <Text style={[styles.settingsLabel, item.danger && { color: colors.no }]}>
                 {item.label}
