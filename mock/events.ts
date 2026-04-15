@@ -2,6 +2,18 @@ import type { EventCardData } from '../components/EventCard'
 
 export const MOCK_EVENTS: EventCardData[] = [
   {
+    id: '6',
+    title: 'Bowling vendredi',
+    date: new Date(Date.now() - 2 * 60 * 60 * 1000), // passé depuis 2h
+    location: "Bowl'n One",
+    maxParticipants: 10,
+    confirmed: 7,
+    maybe: 1,
+    no: 2,
+    waitlistCount: 0,
+    userStatus: 'yes',
+  },
+  {
     id: '1',
     title: 'Soirée rooftop',
     date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
@@ -81,6 +93,27 @@ export interface MockEventDetail {
 }
 
 export const MOCK_EVENT_DETAILS: Record<string, MockEventDetail> = {
+  '6': {
+    id: '6',
+    title: 'Bowling vendredi',
+    date: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    deadline: new Date(Date.now() - 4 * 60 * 60 * 1000),
+    location: "Bowl'n One",
+    creatorId: 'u1',
+    creatorName: 'Lucas',
+    maxParticipants: 10,
+    participants: [
+      { id: 'u1', name: 'Lucas', status: 'yes' },
+      { id: 'u2', name: 'Emma', status: 'yes' },
+      { id: 'u3', name: 'Théo', status: 'yes' },
+      { id: 'u4', name: 'Sarah', status: 'yes' },
+      { id: 'u5', name: 'Jules', status: 'yes' },
+      { id: 'u6', name: 'Léa', status: 'yes' },
+      { id: 'u7', name: 'Maxime', status: 'yes' },
+      { id: 'u8', name: 'Nina', status: 'maybe' },
+      { id: 'u9', name: 'Romain', status: 'no' },
+    ],
+  },
   '1': {
     id: '1',
     title: 'Soirée rooftop',

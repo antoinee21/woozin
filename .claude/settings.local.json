@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-expo-app@latest . --template blank-typescript)",
+      "Read(//c/Users/antoi/**)",
+      "Bash(npx create-expo-app@latest woozin-app --template blank-typescript)",
+      "Bash(cp -r C:/Users/antoi/woozin-app/. C:/Users/antoi/Woozin/)",
+      "Bash(rm -rf C:/Users/antoi/woozin-app)",
+      "Bash(npx expo:*)",
+      "Bash(npm install:*)",
+      "Bash(gh auth:*)",
+      "Bash(git --version)",
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)"
+    ]
+  }
+}
